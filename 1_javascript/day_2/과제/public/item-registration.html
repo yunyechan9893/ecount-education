@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="css/main.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="../css/main.css">
     <title>Document</title>
 </head>
 <body>
@@ -18,7 +18,7 @@
                     <span>품목코드</span>
                 </td>
                 <td>
-                    <input class="margin-full" type="text" placeholder="품목코드" >
+                    <input class="margin-full" id="item-code" type="text" placeholder="품목코드" >
                 </td>
             </tr>
             <tr class="rectangle" style="background-color: rgb(214, 214, 214);">
@@ -26,16 +26,17 @@
                     <span>품목명</span>
                 </td>
                 <td>
-                    <input class="margin-full" type="text" placeholder="품목명" >
+                    <input class="margin-full" id="item-name" type="text" placeholder="품목명" >
                 </td>
             </tr>
         </table>
         <div style="margin-top: 5px;">
-            <button class="button-color-blue button-style1">저장</button>
-            <button class="button-style1">삭제</button>
-            <button class="button-style1">다시작성</button>
-            <button class="button-style1">닫기</button>
+            <button class="button-color-blue button-style1" id="save">저장</button>
+            <button class="button-style1" id="delete" hidden="true">삭제</button>
+            <button class="button-style1" id="rewrite">다시작성</button>
+            <button class="button-style1" id="close">닫기</button>
         </div>
     </header>
+    <script type="module" src="../js/itemRegistrationView.js" ></script>
 </body>
 </html>
