@@ -11,3 +11,18 @@ export class Item {
     }
     
 };
+
+export class Specification {
+    STORAGE_KEY = 'specification'
+
+    get() {
+        const specifications = localStorage.getItem(this.STORAGE_KEY);
+        return specifications ? JSON.parse(specifications) : [];
+    }
+
+    set(specifications) {
+        console.log(specifications)
+        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(specifications));
+    }
+    
+};

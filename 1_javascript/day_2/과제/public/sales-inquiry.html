@@ -19,63 +19,63 @@
                 </td>
                 <td style="margin:10px; width: auto;">
                     <form class="display-inline" action="#">
-                    <select name="languages" id="lang">
-                    <option value="javascript">2023</option>
-                    <option value="javascript">2022</option>
-                    <option value="javascript">2021</option>
-                    <option value="javascript">2020</option>
-                    <option value="javascript">2019</option>
-                    <option value="javascript">2018</option>
+                    <select name="languages" id="start-year">
+                    <option value="2023">2023</option>
+                    <option value="2022">2022</option>
+                    <option value="2021">2021</option>
+                    <option value="2020">2020</option>
+                    <option value="2019">2019</option>
+                    <option value="2018">2018</option>
                     </select>
                 </form>/
                 <form class="display-inline" action="#">
-                    <select name="languages" id="lang">
-                    <option value="javascript">10</option>
-                    <option value="javascript">09</option>
-                    <option value="javascript">08</option>
-                    <option value="javascript">07</option>
-                    <option value="javascript">06</option>
-                    <option value="javascript">05</option>
+                    <select name="languages" id="start-month">
+                    <option value="10">10</option>
+                    <option value="09">09</option>
+                    <option value="08">08</option>
+                    <option value="07">07</option>
+                    <option value="06">06</option>
+                    <option value="05">05</option>
                     </select>
                 </form>/
                 <form class="display-inline" action="#">
-                    <select name="languages" id="lang">
-                    <option value="javascript">08</option>
-                    <option value="javascript">07</option>
-                    <option value="javascript">06</option>
-                    <option value="javascript">05</option>
-                    <option value="javascript">04</option>
-                    <option value="javascript">03</option>
+                    <select name="languages" id="start-day">
+                    <option value="08">08</option>
+                    <option value="07">07</option>
+                    <option value="06">06</option>
+                    <option value="05">05</option>
+                    <option value="04">04</option>
+                    <option value="03">03</option>
                     </select>
                 </form>~
                 <form class="display-inline" action="#">
-                    <select name="languages" id="lang">
-                    <option value="javascript">2023</option>
-                    <option value="javascript">2022</option>
-                    <option value="javascript">2021</option>
-                    <option value="javascript">2020</option>
-                    <option value="javascript">2019</option>
-                    <option value="javascript">2018</option>
+                    <select name="languages" id="end-year">
+                    <option value="2023">2023</option>
+                    <option value="2022">2022</option>
+                    <option value="2021">2021</option>
+                    <option value="2020">2020</option>
+                    <option value="2019">2019</option>
+                    <option value="2018">2018</option>
                     </select>
                 </form>/
                 <form class="display-inline" action="#">
-                    <select name="languages" id="lang">
-                    <option value="javascript">12</option>
-                    <option value="javascript">11</option>
-                    <option value="javascript">10</option>
-                    <option value="javascript">09</option>
-                    <option value="javascript">08</option>
-                    <option value="javascript">07</option>
+                    <select name="languages" id="end-month">
+                    <option value="12">12</option>
+                    <option value="11">11</option>
+                    <option value="10">10</option>
+                    <option value="09">09</option>
+                    <option value="08">08</option>
+                    <option value="07">07</option>
                     </select>
                 </form>/
                 <form class="display-inline" action="#">
-                    <select name="languages" id="lang">
-                    <option value="javascript">07</option>
-                    <option value="javascript">06</option>
-                    <option value="javascript">05</option>
-                    <option value="javascript">04</option>
-                    <option value="javascript">03</option>
-                    <option value="javascript">02</option>
+                    <select name="languages" id="end-day">
+                    <option value="07">07</option>
+                    <option value="06">06</option>
+                    <option value="05">05</option>
+                    <option value="04">04</option>
+                    <option value="03">03</option>
+                    <option value="02">02</option>
                     </select>
                 </form>
                 </td>
@@ -86,133 +86,52 @@
                 </td>
                 <td>
                     <div style="width: 100%;">
-                        <button type="button" style="width: 24px;">
+                        <button type="button" id="search" style="width: 24px;">
                             <img src="../resource/reading_glasses.png" alt="돋보기버튼" onclick="" style="width: 9px; height: 9px;">
                         </button>
-                        <input type="text" placeholder="품목" style="width: 95%;">
+                        <input type="text" id="keyword" placeholder="품목" style="width: 95%;">
                     </div>
                 </td>
             </tr>
             <tr class="color-main rectangle">
                 <td><span>적요</span></td>
-                <td><input type="text" placeholder="적요" style="width: 98%"></td>
+                <td><input type="text" id="briefs" placeholder="적요" style="width: 98%"></td>
             </tr>
         
             <tr class="rectangle">
-                <td><button class="button-color-blue button-style2 margin-type1"> 검색 </button></td>
+                <td colspan="2">
+                    <button class="button-color-blue button-style2 margin-type1" id="search2"> 검색 </button>
+                    <button class="button-style2 margin-type1" id="clear-search-item"> 초기화 </button>
+                </td>
             </tr>
         </table>
     </header>
     <main>
         <div style="margin-bottom: 5px;">
-            <button>< 이전</button>
-            <button>다음 ></button>
+            <button id="prev">< 이전</button>
+            <button id="next">다음 ></button>
         </div>
         <table style="border-color: black; width: auto; height: auto;">
-            <tr class="color-main">
-                <th class="column-title" scope="col"><input type="checkbox"></th>
-                <th class="column-title"  scope="col" style="width: 150px;">전표일자/번호</th>
-                <th class="column-title"  scope="col" style="width: 150px;">품목코드</th>
-                <th class="column-title"  scope="col" style="width: 200px;">품목명</th>
-                <th class="column-title"  scope="col" style="width: 100px;">수량</th>
-                <th class="column-title"  scope="col" style="width: 100px;">단가</th>
-                <th class="column-title"  scope="col" style="width: 300px;">적요</th>
-            </tr>
-            <tr class="row">
-                <th><input type="checkbox"></th>
-                <th class="color-blue">2023/01/10-3</th>
-                <th>P100001</th>
-                <th>진라면</th>
-                <th style="text-align: end;">10</th>
-                <th style="text-align: end;">2,000</th>
-                <th></th>
-            </tr>
-            <tr class="row">
-                <th><input type="checkbox"></th>
-                <th class="color-blue">2023/01/10-2</th>
-                <th>P100002</th>
-                <th>신라면</th>
-                <th style="text-align: end;">100</th>
-                <th style="text-align: end;">2,500</th>
-                <th></th>
-            </tr>
-            <tr class="row">
-                <th><input type="checkbox"></th>
-                <th class="color-blue">2023/01/10-2</th>
-                <th>P100003</th>
-                <th>안성탕면</th>
-                <th style="text-align: end;">101</th>
-                <th style="text-align: end;">2,600</th>
-                <th></th>
-            </tr>
-            <tr class="row">
-                <th><input type="checkbox"></th>
-                <th class="color-blue">2023/01/10-2</th>
-                <th>P100004</th>
-                <th>짜파게티</th>
-                <th style="text-align: end;">1011</th>
-                <th style="text-align: end;">2,800</th>
-                <th></th>
-            </tr>
-            <tr class="row">
-                <th><input type="checkbox"></th>
-                <th class="color-blue">2023/01/10-3</th>
-                <th>P100001</th>
-                <th>진라면</th>
-                <th style="text-align: end;">10</th>
-                <th style="text-align: end;">2,000</th>
-                <th></th>
-            </tr>
-            <tr class="row">
-                <th><input type="checkbox"></th>
-                <th class="color-blue">2023/01/10-2</th>
-                <th>P100002</th>
-                <th>신라면</th>
-                <th style="text-align: end;">100</th>
-                <th style="text-align: end;">2,500</th>
-                <th></th>
-            </tr>
-            <tr class="row">
-                <th><input type="checkbox"></th>
-                <th class="color-blue">2023/01/10-2</th>
-                <th>P100003</th>
-                <th>안성탕면</th>
-                <th style="text-align: end;">101</th>
-                <th style="text-align: end;">2,600</th>
-                <th></th>
-            </tr>
-            <tr class="row">
-                <th><input type="checkbox"></th>
-                <th class="color-blue">2023/01/10-2</th>
-                <th>P100004</th>
-                <th>짜파게티</th>
-                <th style="text-align: end;">1011</th>
-                <th style="text-align: end;">2,800</th>
-                <th></th>
-            </tr>
-            <tr class="row">
-                <th><input type="checkbox"></th>
-                <th class="color-blue">2023/01/10-3</th>
-                <th>P100001</th>
-                <th>진라면</th>
-                <th style="text-align: end;">10</th>
-                <th style="text-align: end;">2,000</th>
-                <th></th>
-            </tr>
-            <tr class="row">
-                <th><input type="checkbox"></th>
-                <th class="color-blue">2023/01/10-2</th>
-                <th>P100002</th>
-                <th>신라면</th>
-                <th style="text-align: end;">100</th>
-                <th style="text-align: end;">2,500</th>
-                <th></th>
-            </tr>
+            <thead>
+                <tr class="color-main">
+                    <th class="column-title" scope="col"><input type="checkbox"></th>
+                    <th class="column-title"  scope="col" style="width: 250px;">전표일자/번호</th>
+                    <th class="column-title"  scope="col" style="width: 150px;">품목코드</th>
+                    <th class="column-title"  scope="col" style="width: 200px;">품목명</th>
+                    <th class="column-title"  scope="col" style="width: 100px;">수량</th>
+                    <th class="column-title"  scope="col" style="width: 100px;">단가</th>
+                    <th class="column-title"  scope="col" style="width: 300px;">적요</th>
+                </tr>
+            </thead>
+            <tbody id="table-body">
+                <!-- 동적으로 생성된 행이 여기에 추가됩니다 -->
+            </tbody>
         </table>
         <div style="margin-top: 5px;">
-            <button class="button-color-blue button-style1">신규</button>
-            <button class="button-style1">선택삭제</button>
+            <button class="button-color-blue button-style1" id="new">신규</button>
+            <button class="button-style1" id="selectedDeletion">선택삭제</button>
         </div>
     </main>
+    <script type="module" src="../js/saleInquiryView.js" ></script>
 </body>
 </html>

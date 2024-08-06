@@ -13,8 +13,16 @@ app.get('/sales/inquiry', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'sales-inquiry.html'));
 });
 
-app.get('/sales/input', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'sales-inquiry.html'));
+app.get('/sales/modification', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'sales-input.html'));
+});
+
+app.get('/sales/registraion', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'sales-input.html'));
+});
+
+app.get('/sales/search', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'item-inquiry.html'));
 });
 
 app.get('/item/inquiry', (req, res) => {
