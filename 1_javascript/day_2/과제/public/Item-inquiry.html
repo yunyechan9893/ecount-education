@@ -32,7 +32,7 @@
             <tr class="rectangle">
                 <td colspan='2'>
                     <button class="button-color-blue button-style2 margin-type1 display-inline" id='search'>검색</button>
-                    <button class="button-style2 margin-type1 display-inline" id='cancel-search'>초기화</button>
+                    <button class="button-style2 margin-type1 display-inline" id='clear-search-item'>초기화</button>
                 </td>
             </tr>
         </table>
@@ -45,7 +45,7 @@
         <table style="border-color: black; width: 100%; height: auto; margin-top: 5px;">
             <thead>
                 <tr class="color-main">
-                    <th class="column-title" scope="col" style="width: 5px;"><input type="checkbox"></th>
+                    <th class="column-title" scope="col" style="width: 5px;"><input id="selector-parent" type="checkbox"></th>
                     <th class="column-title" scope="col" style="width: 150px;">품목코드</th>
                     <th class="column-title" scope="col" style="width: auto;">품목명</th>
                     <th class="column-title" scope="col" style="width: 80px; text-align: center;">수정</th>
@@ -59,9 +59,10 @@
         <div style="margin-top: 5px;">
             <button class="button-color-blue button-style1" id="apply">적용</button>
             <button class="button-style1" id="new">신규</button>
+            <button class="button-style1" id="delete">선택삭제</button>
             <button class="button-style1" id="close">닫기</button>
         </div>
     </main>
-    <script type="module" src="../js/itemInquiryView.js" ></script>
+    <script type="module" src="../js/item_inquiry/itemInquiryView.js" ></script>
 </body>
 </html>

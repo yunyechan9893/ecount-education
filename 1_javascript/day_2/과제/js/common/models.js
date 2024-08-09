@@ -21,8 +21,21 @@ export class Specification {
     }
 
     set(specifications) {
-        console.log(specifications)
         localStorage.setItem(this.STORAGE_KEY, JSON.stringify(specifications));
     }
     
+};
+
+export class Index {
+    specification = {
+        STORAGE_KEY: 'specification_index',
+        get() {
+            const specifications = localStorage.getItem(this.STORAGE_KEY);
+            return specifications ? JSON.parse(specifications) : [];
+        },
+
+        set(dates) {
+            localStorage.setItem(this.STORAGE_KEY, JSON.stringify(dates));
+        }
+    }
 };

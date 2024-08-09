@@ -1,4 +1,4 @@
-import { Item, Specification } from './models.js'
+import { Item, Specification, Index } from './models.js'
 
 const item = new Item();
 
@@ -58,7 +58,21 @@ export class ItemController {
     }
 
     getAll() {
-        return item.getItems();
+        const items = item.getItems();
+        this.sort(items);
+        return items;
+    }
+    
+    sort(items) {
+        items.sort(function(item1, item2) {
+            if (item1.code < item2.code) {
+                return -1;
+            } else if (item1.code > item2.code) {
+                return 1;
+            } else {
+                return 0;
+            }
+        });
     }
 
     searchItems = (itemCodeValue, itemNameValue) => {
@@ -74,30 +88,54 @@ export class ItemController {
 }
 
 const specification = new Specification();
+const index = new Index();
 export class SpecificationController {
 
-    exist(date, number) {
-        let specifications = specification.get();
+    number = {
+        set(date) {
+            let numbers = index.specification.get();
 
-        specifications.forEach((specification) => {
-            if (specification.date == date && specification.number == number) {
-                return true
+            const existingEntry = numbers.find(entry => entry.date === date);
+
+            if (existingEntry) {
+                // 기존에 date가 있으면 인덱스를 1 증가시킵니다
+                existingEntry.index += 1;
+                index.specification.set(numbers);
+                return existingEntry.index;
+            } 
+            
+            numbers.push({ date: date, index: 1 });
+            index.specification.set(numbers);
+
+            return 1;
+        }
+    }
+
+    exist(date, number) {
+        let isExisted = false;
+
+        specification.get().forEach((specification) => {
+            if (specification.date == date && String(specification.number) == String(number)) {
+                isExisted = true
             }
         })
 
-        return false
+        return isExisted;
     }
 
     select(date, number) {
-        let specifications = specification.get();
-
-        specifications.forEach((specification, idx) => {
-            if (specification.date == date && specification.number == number) {
-                return idx
+        let selectedIndex = -1;
+        specification.get().forEach((specification, idx) => {
+            if (
+                specification.date === date && 
+                String(specification.number) === String(number)
+            ) {
+                selectedIndex = idx;
+                return;
             }
         })
 
-        return -1
+        return selectedIndex;
     }
 
     selectLastNumber(date) {
@@ -114,12 +152,13 @@ export class SpecificationController {
     }
 
     push(date, code, name, quantity, price, briefs) {
-        const number = this.selectLastNumber(date);
-
+        const number = this.number.set(date);
+    
         if ( number <= 0 ) {
             return false
         }
 
+        
         let specifications = specification.get();
 
         specifications.push({
@@ -137,14 +176,12 @@ export class SpecificationController {
 
     alter(date, number, code, name, quantity, price, briefs) {
         const isExist = this.exist(date, number);
-
         if ( !isExist ) { // 명세서가 존재하지 않음
             return false
         }
 
+        this.delete(date, number);
         let specifications = specification.get();
-        specifications = specifications.filter(
-            specification => specification.date !== date && specification.number !== number)
         
         specifications.push({
             date: date,
@@ -162,7 +199,7 @@ export class SpecificationController {
     delete(date, number) {
         let indexToDelete = this.select(date, number);
 
-        if (indexToDelete.length < 0) {
+        if (indexToDelete < 0) {
             return false
         }
         
@@ -173,21 +210,55 @@ export class SpecificationController {
     }
 
     getAll() {
-        return specification.get();
+        const specifications = specification.get();
+        this.sort(specifications);
+
+        return specifications;
     }
 
-    search(startDate, endDate, itemCode, itemName, briefs) {
+    sort(specifications) {
+        specifications.sort(function(item1, item2) {
+            if (item1.date < item2.date) {
+                return 1; 
+            } else if (item1.date > item2.date) {
+                return -1;
+            } else {
+                if (item1.number < item2.number) {
+                    return 1;
+                } else if (item1.number > item2.number) {
+                    return -1; 
+                } else {
+                    return 0; 
+                }
+            }
+        });
+    }
+
+    search(startDate, endDate, items, briefs) {
         // 모든 사양 정보를 가져옵니다
         const specifications = this.getAll();
-    
-        // 필터링을 위한 조건 함수를 정의합니다
-        const filterFunction = (item) => {
-            // 날짜 필터링
+
+        if (items.length > 0) {
+            const filteredSpecifications = [];
+            items.forEach((item) => {
+                const itemCode = item.itemCode
+                const filter = this.getFilter(startDate, endDate, itemCode, briefs)
+                filteredSpecifications.push(specifications.filter(filter));
+            })
+            return filteredSpecifications.flat();
+        }
+
+        const filter = this.getFilter(startDate, endDate, null, briefs)
+        const filteredSpecifications = specifications.filter(filter);
+        return filteredSpecifications;
+    }
+
+    getFilter(startDate, endDate, itemCode, briefs) {
+        return (item) => {
             const start = new Date(startDate);
             const end = new Date(endDate);
             const itemDate = new Date(item.date);
 
-            // 날짜 비교
             if (itemDate < start || itemDate > end) {
                 return false;
             }
@@ -200,13 +271,9 @@ export class SpecificationController {
                 return false;
             }
     
-            // 모든 조건을 통과하면 true를 반환
             return true;
         };
-    
-        // specifications.data를 필터링합니다
-        const filteredSpecifications = specifications.filter(filterFunction);
-        
-        return filteredSpecifications;
     }
 }
+
+

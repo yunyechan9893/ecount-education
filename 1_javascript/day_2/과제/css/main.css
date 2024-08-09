@@ -85,3 +85,35 @@ table, th {
     font-weight: bold;
     text-align: center;
 }
+
+/* #element-box {
+    position: relative;
+    padding-left: 50%;
+    width: 100%;
+} */
+
+.keyword-tag {
+    background-color: lightblue;
+    font-size: 10px; /* 최적의 글자 크기 설정 */
+    font-weight: bold;
+    display: inline-flex; /* Flexbox 사용하여 아이템을 정렬 */
+    align-items: center; /* 수직 중앙 정렬 */
+    white-space: nowrap; /* 내용이 넘칠 때 줄 바꿈 방지 */
+    text-align: center;
+    border: 1px solid #ccc; /* 선택적: 테두리 추가 */
+    border-radius: 4px; /* 선택적: 모서리 둥글게 */
+    padding-left: 3px;
+    padding-right: 10px;
+    height: 14px;
+}
+
+.tag-close {
+    height: 13px; /* 버튼 크기 조정 */
+    width: 13px;
+    font-size: 12px; /* 버튼 글자 크기 조정 */
+    margin: 1px; /* 버튼과 텍스트 사이의 간격 조정 */
+    border: none;
+    background: red; /* 버튼 배경색 */
+    color: white; /* 버튼 글자색 */
+    cursor: pointer;
+}

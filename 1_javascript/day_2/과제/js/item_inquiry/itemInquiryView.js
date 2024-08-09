@@ -1,39 +1,56 @@
-import { ItemController } from "./controllers.js";
-import { messageTag } from "./enum.js"
+import { ItemController } from "../common/controllers.js";
+import { Page, ItemList, CheckBoxList, SelectLimit } from "./itemInquiryControllers.js";
+import { messageTag } from "../common/enum.js"
 
-const PAGE_LIMIT = 10;
-const CHECKED_CHECKBOX_LIMIT = 3;
 const ITEM_INQUIRY_API = '/item/inquiry'
-const checkedCheckboxList = []
-let pageStatus = PAGE_LIMIT;
 
 const itemController = new ItemController();
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 검색어, 페이지 초기화 이벤트
-    // URL에서 쿼리 파라미터를 가져옵니다.
+    init()
+    eventListener();
+})
+
+function init() {
     const queryParams = new URLSearchParams(window.location.search);
-
-    // 'code'와 'name' 쿼리 파라미터를 가져옵니다.
-    const keyword = queryParams.get('keyword');
     const page = queryParams.get('page');
-    // const keywordTextBox = document.querySelector('#item-name');
+    const choiceLimit = queryParams.get('limit');
+    const keyword = queryParams.get('keyword');
 
-    pageStatus = page == null ? PAGE_LIMIT : parseInt(page);
-    // keywordTextBox.value = keyword == null ? "w":keyword;
+    Page.setPage(page);
 
-    if (keyword != null) {
-        performSearch('', keyword)
-        document.querySelector('#data-name').value = keyword
-    } else {
-        // 테이블 아이템 초기화 이벤트
-        initializeTableItem()
+    if (choiceLimit) {
+        SelectLimit.set(choiceLimit);
     }
-    // item-registration 팝업 띄움 이벤트
+
+    if (keyword) {
+        document.getElementById('data-name').value = keyword;
+        handleSearchButtonClick();
+    } else {
+        initializeTableItem();
+    }
+    
+    window.addEventListener('message', function(event) {
+        if (event.data.type === messageTag.ITEM_INQUIRY) {
+            const queryParams = new URLSearchParams(window.location.search);
+            const page = queryParams.get('page');
+            
+            if (page != null) {
+                Page.setPage(page)
+            }
+         
+            // 페이지 새로 고침
+            initializeTableItem()
+        }
+    });
+}
+
+function eventListener() {
+
     const newButton = document.querySelector('#new')
     newButton.addEventListener('click', ()=> {
         const queryParams = new URLSearchParams({
-            page: pageStatus
+            page: Page.getCurrentPage()
         }).toString();
         
         // 팝업을 여는 URL을 생성합니다.
@@ -41,51 +58,31 @@ document.addEventListener('DOMContentLoaded', () => {
         
         openPopup(url);
     })
-
-    // 화면 리로드 이벤트
-    window.addEventListener('message', function(event) {
-        console.log(event)
-        if (event.data.type === messageTag.ITEM_INQUIRY) {
-            // 메인 화면 새로고침
-            const url = new URL(window.location.href);
-            url.searchParams.set('page', event.data.page);
-
-            // 페이지 새로 고침
-            window.location.href = url.toString();
-        }
-    });
-
+    
     const nextButton = document.querySelector('#next');
     nextButton.addEventListener('click', () => {
-        const itemSize = itemController.getAll().length;
-
-        console.log(itemSize, pageStatus)
-        if (itemSize < pageStatus) {
-            return;
-        }
-
-        pageStatus = pageStatus + PAGE_LIMIT;
-        initializeTableItem();
+        const itemSize = ItemList.size();
+ 
+        Page.setNextPage(itemSize);
+        printTableItem();
+        checkParentCheckBox(false);
     })
 
     const prevButton = document.querySelector('#prev');
     prevButton.addEventListener('click', () => {
-        const itemSize = itemController.getAll().length;
-
-        console.log(itemSize, pageStatus)
-        if (0 >= pageStatus - PAGE_LIMIT) {
-            return;
-        }
-
-        pageStatus = pageStatus - PAGE_LIMIT;
-        initializeTableItem();
+        Page.setPrevPage();
+        printTableItem();
+        checkParentCheckBox(false);
     })
 
     const searchButton = document.querySelector('#search');
     searchButton.addEventListener('click', () => handleSearchButtonClick())
 
-    const cancelSearchButton = document.querySelector('#cancel-search');
-    cancelSearchButton.addEventListener('click', () => initializeTableItem())
+    const cancelSearchButton = document.querySelector('#clear-search-item');
+    cancelSearchButton.addEventListener('click', () => {
+        const searchInit = document.getElementById('clear-search-item');
+        searchInit.style.backgroundColor = '' 
+        initializeTableItem()})
 
     const applyButton = document.querySelector('#apply');
     applyButton.addEventListener('click', () => {
@@ -119,7 +116,38 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const closeButton = document.querySelector('#close');
     closeButton.addEventListener('click', () => window.close())
-})
+
+    const selectorParent = document.querySelector('#selector-parent');
+
+    selectorParent.onclick = () => {
+        const selectors = document.getElementsByClassName('selector');
+   
+        Array.from(selectors).forEach(selector => {
+            selector.checked = selectorParent.checked;
+        });
+    }
+
+    const deleteButton = document.querySelector('#delete');
+
+    deleteButton.addEventListener('click', () => {
+        CheckBoxList.get().forEach((item) => {
+            const code = item.getAttribute('data-item-code');
+
+            itemController.delete(code);
+            ItemList.delete(code)
+            
+        });
+
+        Page.init();
+        printTableItem();
+        checkParentCheckBox(false);
+    })
+}
+
+function checkParentCheckBox(isTurnOn) {
+    const selectorParent = document.querySelector('#selector-parent');
+    selectorParent.checked = isTurnOn;
+}
 
 function openPopup(url) {
     window.open(url, '_blank', 'width=600,height=400'); // 팝업 창 열기
@@ -149,18 +177,16 @@ const addRow = (code, name) => {
     checkbox.setAttribute('data-item-code', code);
     checkboxTh.appendChild(checkbox);
 
-    if (checkedCheckboxList.some(item => item.getAttribute('data-item-code') === code)) {
+    if (CheckBoxList.get().some(item => item.getAttribute('data-item-code') === code)) {
         checkbox.checked = true;
     }
 
     checkbox.addEventListener('change', function(event) {
         if (event.target.checked) {
-            checkedCheckboxList.push(checkbox)
+            CheckBoxList.push(checkbox);
         } else {
-            const index = checkedCheckboxList.indexOf(checkbox);
-            if (index !== -1) {
-                checkedCheckboxList.splice(index, 1);
-            }
+            const code = checkbox.getAttribute('data-item-code');
+            CheckBoxList.delete(code);
         }
     });
     
@@ -191,7 +217,7 @@ const addRow = (code, name) => {
         const queryParams = new URLSearchParams({
             code: itemCode,
             name: itemName,
-            page: pageStatus
+            page: Page.getCurrentPage()
         }).toString();
         
         // 팝업을 여는 URL을 생성합니다.
@@ -211,14 +237,15 @@ const addRow = (code, name) => {
 }
 
 function initializeTableItem() {
-    const itemList = itemController.getAll();
+    ItemList.set(itemController.getAll())
 
-    printTableItem(itemList);
+    printTableItem();
 }
 
-function printTableItem(itemList) {
+function printTableItem() {
     tableClear();
-    itemList.slice(pageStatus - PAGE_LIMIT, pageStatus).forEach((item) => {
+    checkPage();
+    ItemList.get().slice(Page.getPrevPage(), Page.getCurrentPage()).forEach((item) => {
         addRow(item.code, item.name)
     });
 }
@@ -231,16 +258,20 @@ function handleSearchButtonClick() {
     let itemNameValue = itemName.value == null ? '' : itemName.value;
 
     if (itemCodeValue.length <= 0 && itemNameValue.length <= 0) {
-        console.log('품목코드 혹은 품목명을 입력해주세요')
+        alert('품목코드 혹은 품목명을 입력해주세요')
         return
     }
 
+    const searchInit = document.getElementById('clear-search-item');
+    searchInit.style.backgroundColor = 'orange' 
+    Page.init()
     performSearch(itemCodeValue, itemNameValue);
 }
 
 function performSearch(code, value) {
     const searchedList = itemController.searchItems(code, value);
-    printTableItem(searchedList);
+    ItemList.set(searchedList);
+    printTableItem();
 }
 
 function excuteRefreshClose(bundle, messageType) {
@@ -257,7 +288,7 @@ function checkSelectedCheckboxToLimit() {
     let checkBoxList = [];
 
     // HTMLCollection은 배열 메서드가 없으므로 forEach를 사용하려면 Array.from()을 사용해야 합니다.
-    checkedCheckboxList.forEach((checkbox) => {
+    CheckBoxList.get().forEach((checkbox) => {
         if (checkbox.checked) {
             checkBoxList.push(checkbox)
         }
@@ -268,10 +299,18 @@ function checkSelectedCheckboxToLimit() {
         return []
     }
 
-    if (checkBoxList.length > CHECKED_CHECKBOX_LIMIT) {
-        alert('체크 박스는 3개만 적용할 수 있습니다.')
+    if (checkBoxList.length > SelectLimit.get()) {
+        alert(`체크 박스는 ${SelectLimit.get()}개만 적용할 수 있습니다.`)
         return [];
     }
 
     return checkBoxList;
+}
+
+function checkPage() {
+    const prevButton = document.querySelector('#prev');
+    const nextButton = document.querySelector('#next');
+
+    prevButton.disabled = !Page.existPrevPage();
+    nextButton.disabled = !Page.existNextPage(ItemList.size());
 }

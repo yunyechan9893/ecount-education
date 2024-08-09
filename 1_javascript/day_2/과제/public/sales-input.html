@@ -9,7 +9,7 @@
 <body>
     <header>
         <div class="rectangle page-title">
-            <b>■ 판매 입력</b>
+            <b id="title">■ 판매</b>
         </div>
         <table style="width: 100%; border-collapse: collapse;">
             <tr class="color-main" style="margin-top: 10px; padding: 10px;">
@@ -17,40 +17,31 @@
                     <label class="sub">전표 일자</label>
                 </td>
                 <td>
-                    <form class="display-inline" action="#">
+
                     <select name="languages" id="year">
-                    <option value="2023">2023</option>
-                    <option value="2022">2022</option>
-                    <option value="2021">2021</option>
-                    <option value="2020">2020</option>
-                    <option value="2019">2019</option>
-                    <option value="2018">2018</option>
                     </select>
-                </form>/
-                <form class="display-inline" action="#">
+                    <span>/</span>
                     <select name="languages" id="month">
-                    <option value="10">10</option>
-                    <option value="09">09</option>
-                    <option value="08">08</option>
-                    <option value="07">07</option>
-                    <option value="06">06</option>
-                    <option value="05">05</option>
+                        <option value="12">12</option>
+                        <option value="11">11</option>
+                        <option value="10">10</option>
+                        <option value="09">09</option>
+                        <option value="08">08</option>
+                        <option value="07">07</option>
+                        <option value="06">06</option>
+                        <option value="05">05</option>
+                        <option value="04">04</option>
+                        <option value="03">03</option>
+                        <option value="02">02</option>
+                        <option value="01">01</option>
                     </select>
-                </form>/
-                <form class="display-inline" action="#">
+                    <span>/</span>
                     <select name="languages" id="day">
-                    <option value="08">08</option>
-                    <option value="07">07</option>
-                    <option value="06">06</option>
-                    <option value="05">05</option>
-                    <option value="04">04</option>
-                    <option value="03">03</option>
                     </select>
-                </form>
-                <div id="number" style="display: none;" hidden>
-                    -
-                    <input type="text" style="width: 20px;">
-                </div>
+                    <div style="display: none;" id="number-saction">
+                        <span>-</span>
+                        <input id="number" type="text" style="width: 20px;" disabled>
+                    </div>
                 </td>
             </tr>
             <tr class="color-main rectangle">
@@ -59,10 +50,16 @@
                 </td>
                 <td>
                     <div style="width: 100%;">
-                        <button type="button" id="search" style="width: 24px;">
-                            <img src="../resource/reading_glasses.png" alt="돋보기버튼" onclick="" style="width: 9px; height: 9px;">
-                        </button>
-                        <input id="keyword"type="text" placeholder="품목" style="width:95%">
+                        <div class="display-inline" style="position:relative; width:3%; ">
+                            <button type="button" id="search" style="width: 24px;">
+                                <img src="../resource/reading_glasses.png" alt="돋보기버튼" onclick="" style="width: 9px; height: 9px;">
+                            </button>
+                        </div>
+                        <div class="display-inline" style="position: relative; width: auto;">
+                            <input id="keyword" type="text" style="width: 95%;" placeholder="품목">
+                            <div id="element-box" style="position: absolute; top: 0; left: 40%; width: 95%; z-index: 1;">
+                            </div>
+                        </div>
                     </div>
                 </td>
             </tr>
@@ -79,7 +76,7 @@
                     <span>단가</span>
                 </td>
                 <td>
-                    <input class="margin-full" id="price" type="text" placeholder="단가" >
+                    <input class="margin-full" id="price" type="text" placeholder="단가" value="0">
                 </td>
             </tr>
             <tr class="color-main rectangle">
@@ -98,6 +95,6 @@
             <button class="button-style1" id="close">닫기</button>
         </div>
     </header>
-    <script type="module" src="../js/saleInputView.js" ></script>
+    <script type="module" src="../js/sale_input/saleInputView.js" ></script>
 </body>
 </html>
