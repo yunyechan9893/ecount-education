@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>로그인 화면</title>
+    <link rel="stylesheet" href="../css/member.css">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-form">
+            <h2>로그인</h2>
+            <label for="company-name">회사 이름</label>
+            <input type="text" id="company-name" name="company-name" required>
+
+            <label for="username">사용자 이름</label>
+            <input type="text" id="username" name="username" required>
+
+            <label for="password">비밀번호</label>
+            <input type="password" id="password" name="password" required>
+
+            <button type="submit" id="submit">로그인</button>
+            <div class="form-footer">
+                <p>아직 회원이 아니신가요? <a href="/signup">회원가입</a></p>
+            </div>
+        </div>
+    </div>
+    <script type="module" src="../js/login/loginView.js" ></script>
+</body>
+</html>

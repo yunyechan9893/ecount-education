@@ -4,3 +4,10 @@ export const messageTag = {
     REGISTRATION: "refresh-at-registration",
     MODIFICATION: "refresh-at-modification",
 }
+
+export const EventType = {
+    DOMContentLoaded: 'DOMContentLoaded',
+    click: 'click',
+    change: 'change',
+    message: 'message'
+}

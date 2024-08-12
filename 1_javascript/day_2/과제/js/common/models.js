@@ -39,3 +39,29 @@ export class Index {
         }
     }
 };
+
+export const Member = {
+    STORAGE_KEY: 'member',
+    get() {
+        const members = localStorage.getItem(this.STORAGE_KEY);
+        return members ? JSON.parse(members) : [];
+    },
+
+    set(dates) {
+        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(dates));
+    }
+};
+
+export const Token = {
+    STORAGE_KEY: 'token',
+    get() {
+        const tokenStorageString = localStorage.getItem(this.STORAGE_KEY);
+        const tokenStorage = JSON.parse(tokenStorageString);
+
+        return tokenStorage ? true : false;
+    },
+
+    set(dates) {
+        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(dates));
+    }
+};

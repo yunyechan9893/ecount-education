@@ -1,10 +1,11 @@
 import { ItemController } from "../common/controllers.js";
 import { PageStatus, CurrentItem } from "./itemRegistrationControllers.js";
-import { messageTag } from "../common/enum.js"
+import { messageTag, EventType } from "../common/enum.js"
+import { ViewFinder } from "./itemRegistrationMapping.js";
 
 const MODIFICATION_PATH = '/item/modification';
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener(EventType.DOMContentLoaded, () => {
 
     const path = window.location.pathname;
     if (path === MODIFICATION_PATH) {
@@ -18,15 +19,15 @@ document.addEventListener('DOMContentLoaded', () => {
         CurrentItem.set(itemCode, itemName);
 
         if (itemCode) {
-            document.getElementById('item-code').value = itemCode;
+            ViewFinder.textbox.itemCode.value = itemCode;
         }
 
         if (itemName) {
-            document.getElementById('item-name').value = itemName;
+            ViewFinder.textbox.itemName.value = itemName;
         }
         
-        const deleteButton = document.querySelector('#delete');
-        const codeTextBox = document.querySelector('#item-code')
+        const deleteButton = ViewFinder.button.delete;
+        const codeTextBox  = ViewFinder.textbox.itemCode
     
         deleteButton.hidden = false;
         codeTextBox.disabled = true;
@@ -37,10 +38,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 const itemController = new ItemController()
 
-const savingButton = document.querySelector('#save')
-savingButton.addEventListener('click', () => {
-    const itemCode = document.querySelector('#item-code');
-    const itemName = document.querySelector('#item-name');
+ViewFinder.button.save.addEventListener(EventType.click, () => {
+    const itemCode = ViewFinder.textbox.itemCode;
+    const itemName = ViewFinder.textbox.itemName;
 
     if (itemCode.value.length < 1 || itemName.value.length < 1) {
         alert('품목코드 혹은 품목명을 확인해주세요')
@@ -71,10 +71,10 @@ savingButton.addEventListener('click', () => {
 
 })
 
-const deleteButton = document.querySelector('#delete')
-deleteButton.addEventListener('click', () => {
-    const itemCode = document.querySelector('#item-code');
-    const itemName = document.querySelector('#item-name');
+const deleteButton = ViewFinder.button.delete
+deleteButton.addEventListener(EventType.click, () => {
+    const itemCode = ViewFinder.textbox.itemCode;
+    const itemName = ViewFinder.textbox.itemName;
 
     if (itemCode.value.length < 1 || itemName.value.length < 1) {
         alert('품목코드 혹은 품목명을 확인해주세요')
@@ -91,10 +91,10 @@ deleteButton.addEventListener('click', () => {
     excuteRefreshClose()
 })
 
-const rewriteButton = document.querySelector('#rewrite')
-rewriteButton.addEventListener('click', () => {
-    const itemCode = document.querySelector('#item-code');
-    const itemName = document.querySelector('#item-name');
+const rewriteButton = ViewFinder.button.rewrite
+rewriteButton.addEventListener(EventType.click, () => {
+    const itemCode = ViewFinder.textbox.itemCode;
+    const itemName = ViewFinder.textbox.itemName;
 
     if (PageStatus.checkModificationStatus()) {
         itemCode.value = CurrentItem.get().code;
@@ -107,8 +107,7 @@ rewriteButton.addEventListener('click', () => {
     itemName.value = ''
 })
 
-const closeButton = document.querySelector('#close')
-closeButton.addEventListener('click', () => {
+ViewFinder.button.close.addEventListener(EventType.click, () => {
     window.close()
 })
 

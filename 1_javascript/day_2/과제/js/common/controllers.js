@@ -1,4 +1,5 @@
-import { Item, Specification, Index } from './models.js'
+import { Item, Specification, Index, Member, Token } from './models.js'
+import { generateUUID } from './utils.js'
 
 const item = new Item();
 
@@ -175,25 +176,25 @@ export class SpecificationController {
     }
 
     alter(date, number, code, name, quantity, price, briefs) {
-        const isExist = this.exist(date, number);
-        if ( !isExist ) { // 명세서가 존재하지 않음
-            return false
+        // 명세서가 존재하는지 확인
+        if (!this.exist(date, number)) {
+            return false;
         }
-
+    
+        // 명세서 삭제 및 업데이트
         this.delete(date, number);
-        let specifications = specification.get();
         
-        specifications.push({
-            date: date,
-            number: number,
-            code: code,
-            name: name,
-            quantity: quantity, 
-            price: price, 
-            briefs: briefs})
-
+        // 숫자 형식으로 변환 (필요할 경우)
+        number = Number(number);
+    
+        // 새로운 사양 추가
+        const newSpecification = { date, number, code, name, quantity, price, briefs };
+        const specifications = [...specification.get(), newSpecification];
+    
+        // 명세서 저장
         specification.set(specifications);
-        return true
+        
+        return true;
     }
 
     delete(date, number) {
@@ -213,6 +214,7 @@ export class SpecificationController {
         const specifications = specification.get();
         this.sort(specifications);
 
+        console.log(specifications)
         return specifications;
     }
 
@@ -276,4 +278,62 @@ export class SpecificationController {
     }
 }
 
+export const MemberController = {
+    create(
+        company,
+        name,
+        email,
+        password
+    ) {
+        if (this.duplication(email)) {
+            return false;
+        }
+        const members = Member.get();
+        members.push({
+            company: company,
+            name: name,
+            email: email,
+            password: password
+        });
 
+        Member.set(members);
+
+        return true;
+    },
+
+    getAll() {
+        return Member.get();
+    },
+
+    duplication(email) {
+        return this.getAll().some(item => item.email == email);
+    },
+
+    equls(
+        company,
+        name,
+        password
+    ) {
+        return this.getAll().some(item => 
+            item.company === company && 
+            item.name === name && 
+            item.password === password
+        );
+    },
+}
+
+export const TokenController = {
+    create() {
+        const token = generateUUID();
+        Token.set({token: token});
+    },
+
+    exist() {
+        const token = Token.get();
+        if (token) {
+            return true;
+        }
+
+        return false;
+    }
+}

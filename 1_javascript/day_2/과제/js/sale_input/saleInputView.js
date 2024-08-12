@@ -1,7 +1,9 @@
 import { SpecificationController } from "../common/controllers.js";
 import { DateConponent } from "../common/component.js";
+import { messageTag, EventType } from "../common/enum.js"
 import { PageStatus, SearchedItems, Specification } from "./saleInputControllers.js";
-import { messageTag } from "../common/enum.js"
+import { ViewFinder } from "./saleInputMapping.js";
+
 
 const MODIFICAION_PATH = '/sales/modification'
 const specificationController = new SpecificationController();
@@ -10,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initDate();
 
     const path = window.location.pathname;
-    const titleText = document.getElementById('title');
+    const titleText = ViewFinder.textbox.title;
     if (path === MODIFICAION_PATH) {
 
         const queryParams = new URLSearchParams(window.location.search);
@@ -36,9 +38,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const [selectedYear, selectedMonth, selectedDay] = Specification.date.get().split('-');
 
         // 각 드롭다운 요소를 가져옵니다.
-        const yearDropBox = document.getElementById('year');
-        const monthDropBox = document.getElementById('month');
-        const dayDropBox = document.getElementById('day');
+        const yearDropBox = ViewFinder.dropbox.year;
+        const monthDropBox = ViewFinder.dropbox.month;
+        const dayDropBox = ViewFinder.dropbox.day;
 
         // 드롭다운에서 옵션을 선택하는 함수
         function selectOption(dropBox, value) {
@@ -57,13 +59,12 @@ document.addEventListener('DOMContentLoaded', () => {
         monthDropBox.disabled = true
         dayDropBox.disabled = true
 
-        const titleText = document.getElementById('title');
         const numberSaction = document.getElementById('number-saction');
-        const numberTextBox = document.getElementById('number');
-        const deleteButton = document.querySelector('#delete');
-        const priceTextBox = document.querySelector('#price');
-        const quantityTextBox = document.querySelector('#quantity');
-        const briefsTextBox = document.querySelector('#briefs');
+        const numberTextBox = ViewFinder.textbox.number;
+        const deleteButton = ViewFinder.button.delete;
+        const priceTextBox = ViewFinder.textbox.price;
+        const quantityTextBox = ViewFinder.textbox.quantity;
+        const briefsTextBox = ViewFinder.textbox.briefs;
     
         createKeywordTag(Specification.code.get(), Specification.name.get());
         quantityTextBox.value = quantity;
@@ -81,7 +82,7 @@ document.addEventListener('DOMContentLoaded', () => {
     eventListener()
 
     // 화면 리로드 이벤트
-    window.addEventListener('message', function(event) {
+    window.addEventListener(EventType.message, function(event) {
         
         clearTagBox();
         if (event.data.type === messageTag.SALE_INPUT) {
@@ -104,19 +105,20 @@ document.addEventListener('DOMContentLoaded', () => {
 })
 
 function eventListener() {
-    const searchButton = document.querySelector('#search');
-    searchButton.addEventListener('click', () => {
+    const searchButton = ViewFinder.button.search;
+    searchButton.addEventListener(EventType.click, () => {
         let limit = PageStatus.checkModificationStatus() ? `&limit=${1}` : `&limit=${3}`;
         const keywordTextBox = document.getElementById('keyword');
         let keyword = keywordTextBox.value.length > 0 ? `&keyword=${keywordTextBox.value}` : '';
-        openPopup(`/sales/search?page=10${limit}${keyword}`, 1000, 600)
+        let url = `/sales/search?page=10${limit}${keyword}`;
+        openPopup(url, 1000, 600)
     })
 
     const savingButton = document.querySelector('#save')
-    savingButton.addEventListener('click', () => {
-        const yearSelector = document.querySelector('#year');
-        const monthSelector = document.querySelector('#month');
-        const daySelector = document.querySelector('#day');
+    savingButton.addEventListener(EventType.click, () => {
+        const yearSelector = ViewFinder.dropbox.year;
+        const monthSelector = ViewFinder.dropbox.month;
+        const daySelector = ViewFinder.dropbox.day;
 
         const selectedYearOption = yearSelector.options[yearSelector.selectedIndex].value;
         const selectedMonthOption = monthSelector.options[monthSelector.selectedIndex].value;
@@ -124,10 +126,9 @@ function eventListener() {
 
         const date = selectedYearOption + "-" + selectedMonthOption + "-" + selectedDayOption;
 
-        const keywordTextBox = document.querySelector('#keyword');
-        const quantityTextBox = document.querySelector('#quantity');
-        const priceTextBox = document.querySelector('#price');
-        const briefsTextBox = document.querySelector('#briefs');
+        const quantityTextBox = ViewFinder.textbox.quantity;
+        const priceTextBox = ViewFinder.textbox.price;
+        const briefsTextBox = ViewFinder.textbox.briefs;
 
         if (selectedYearOption == null && selectedYearOption == '') {
             alert('연도를 입력하세요')
@@ -174,12 +175,12 @@ function eventListener() {
         excuteRefreshClose()
     })
 
-    const rewriteButton = document.querySelector('#rewrite');
-    rewriteButton.addEventListener('click', () => {
-        const numberTextBox = document.getElementById('number');
-        const quantityTextBox = document.querySelector('#quantity');
-        const priceTextBox = document.querySelector('#price');
-        const briefsTextBox = document.querySelector('#briefs');
+    const rewriteButton = ViewFinder.button.rewrite;
+    rewriteButton.addEventListener(EventType.click, () => {
+        const numberTextBox = ViewFinder.textbox.number;
+        const quantityTextBox = ViewFinder.table.quantity;
+        const priceTextBox = ViewFinder.textbox.price;
+        const briefsTextBox = ViewFinder.textbox.briefs;
 
         if (PageStatus.checkModificationStatus()) {
             createKeywordTag(Specification.code.get(), Specification.name.get());
@@ -202,9 +203,9 @@ function eventListener() {
         return;
     })
 
-    const deleteButton = document.querySelector('#delete');
+    const deleteButton = ViewFinder.button.delete;
 
-    deleteButton.addEventListener('click', () => {
+    deleteButton.addEventListener(EventType.click, () => {
         specificationController.delete(
             Specification.date.get(),
             Specification.number.get()
@@ -213,15 +214,15 @@ function eventListener() {
         excuteRefreshClose();
     })
 
-    const closeButton = document.querySelector('#close');
-    closeButton.addEventListener('click', () => window.close())
+    const closeButton = ViewFinder.button.close;
+    closeButton.addEventListener(EventType.click, () => window.close())
     
 }
 
 function initDate() {
-    const yearSelector = document.getElementById('year');
-    const monthSelector = document.getElementById('month');
-    const daySelector = document.getElementById('day');
+    const yearSelector = ViewFinder.dropbox.year;
+    const monthSelector = ViewFinder.dropbox.month;
+    const daySelector = ViewFinder.dropbox.day;
 
     function initializeSelectors(yearSelector, monthSelector, daySelector) {
         DateConponent.populateYears(yearSelector);
@@ -240,8 +241,8 @@ function initDate() {
         DateConponent.populateDays(year, month, daySelector);
     }
 
-    yearSelector.addEventListener('change', () => handleDateChange(yearSelector, monthSelector, daySelector));
-    monthSelector.addEventListener('change', () => handleDateChange(yearSelector, monthSelector, daySelector));
+    yearSelector.addEventListener(EventType.change, () => handleDateChange(yearSelector, monthSelector, daySelector));
+    monthSelector.addEventListener(EventType.change, () => handleDateChange(yearSelector, monthSelector, daySelector));
 }
 
 function createKeywordTag(code, name) {
@@ -260,7 +261,7 @@ function createKeywordTag(code, name) {
     button.className = 'tag-close'
     button.textContent = 'x';
 
-    button.addEventListener('click', () => {
+    button.addEventListener(EventType.click, () => {
         keywordTag.remove(code)
         SearchedItems.delete(code);
     })
@@ -295,11 +296,4 @@ function excuteRefreshClose() {
 
     window.opener.postMessage(message, '*');
     window.close()
-}
-
-function deleteTag(id) {
-    const element = document.getElementById(id);
-    if (element) {
-        element.remove();
-    }
 }

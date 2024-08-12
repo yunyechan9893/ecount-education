@@ -1,12 +1,14 @@
 import { ItemController } from "../common/controllers.js";
+import { messageTag, EventType } from "../common/enum.js"
 import { Page, ItemList, CheckBoxList, SelectLimit } from "./itemInquiryControllers.js";
-import { messageTag } from "../common/enum.js"
+import { ViewFinder } from "./itemInquiryMapping.js";
+
 
 const ITEM_INQUIRY_API = '/item/inquiry'
 
 const itemController = new ItemController();
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener(EventType.DOMContentLoaded, () => {
     init()
     eventListener();
 })
@@ -24,13 +26,13 @@ function init() {
     }
 
     if (keyword) {
-        document.getElementById('data-name').value = keyword;
+        ViewFinder.textbox.dataName.value = keyword;
         handleSearchButtonClick();
     } else {
         initializeTableItem();
     }
     
-    window.addEventListener('message', function(event) {
+    window.addEventListener(EventType.message, function(event) {
         if (event.data.type === messageTag.ITEM_INQUIRY) {
             const queryParams = new URLSearchParams(window.location.search);
             const page = queryParams.get('page');
@@ -47,8 +49,7 @@ function init() {
 
 function eventListener() {
 
-    const newButton = document.querySelector('#new')
-    newButton.addEventListener('click', ()=> {
+    ViewFinder.button.new.addEventListener(EventType.click, ()=> {
         const queryParams = new URLSearchParams({
             page: Page.getCurrentPage()
         }).toString();
@@ -58,9 +59,8 @@ function eventListener() {
         
         openPopup(url);
     })
-    
-    const nextButton = document.querySelector('#next');
-    nextButton.addEventListener('click', () => {
+
+    ViewFinder.button.nextPage.addEventListener(EventType.click, () => {
         const itemSize = ItemList.size();
  
         Page.setNextPage(itemSize);
@@ -68,24 +68,19 @@ function eventListener() {
         checkParentCheckBox(false);
     })
 
-    const prevButton = document.querySelector('#prev');
-    prevButton.addEventListener('click', () => {
+    ViewFinder.button.prevPage.addEventListener(EventType.click, () => {
         Page.setPrevPage();
         printTableItem();
         checkParentCheckBox(false);
     })
 
-    const searchButton = document.querySelector('#search');
-    searchButton.addEventListener('click', () => handleSearchButtonClick())
+    ViewFinder.button.search.addEventListener(EventType.click, () => handleSearchButtonClick())
 
-    const cancelSearchButton = document.querySelector('#clear-search-item');
-    cancelSearchButton.addEventListener('click', () => {
-        const searchInit = document.getElementById('clear-search-item');
-        searchInit.style.backgroundColor = '' 
+    ViewFinder.button.searchedItemClean.addEventListener(EventType.click, () => {
+        ViewFinder.button.searchedItemClean.style.backgroundColor = '' 
         initializeTableItem()})
 
-    const applyButton = document.querySelector('#apply');
-    applyButton.addEventListener('click', () => {
+    ViewFinder.button.apply.addEventListener(EventType.click, () => {
         const selectedCheckboxes = checkSelectedCheckboxToLimit();
         const rowData = [];
 
@@ -114,24 +109,19 @@ function eventListener() {
         excuteRefreshClose(rowData, messageTag.SALE_INPUT)
     })
 
-    const closeButton = document.querySelector('#close');
-    closeButton.addEventListener('click', () => window.close())
+    ViewFinder.button.close.addEventListener(EventType.click, () => window.close())
 
-    const selectorParent = document.querySelector('#selector-parent');
-
-    selectorParent.onclick = () => {
+    ViewFinder.checkbox.parent.onclick = () => {
         const selectors = document.getElementsByClassName('selector');
    
         Array.from(selectors).forEach(selector => {
-            selector.checked = selectorParent.checked;
+            selector.checked = ViewFinder.checkbox.parent.checked;
         });
     }
 
-    const deleteButton = document.querySelector('#delete');
-
-    deleteButton.addEventListener('click', () => {
+    ViewFinder.button.delete.addEventListener(EventType.click, () => {
         CheckBoxList.get().forEach((item) => {
-            const code = item.getAttribute('data-item-code');
+            const code = item.dataset.itemCode;
 
             itemController.delete(code);
             ItemList.delete(code)
@@ -144,9 +134,8 @@ function eventListener() {
     })
 }
 
-function checkParentCheckBox(isTurnOn) {
-    const selectorParent = document.querySelector('#selector-parent');
-    selectorParent.checked = isTurnOn;
+function checkParentCheckBox(isTurnOn) {;
+    ViewFinder.checkbox.parent.checked = isTurnOn;
 }
 
 function openPopup(url) {
@@ -154,7 +143,7 @@ function openPopup(url) {
 }
 
 const tableClear = () => {
-    const tbody = document.getElementById('tableBody');
+    const tbody = ViewFinder.table.body;
 
     while (tbody.firstChild) {
         tbody.removeChild(tbody.firstChild);
@@ -163,7 +152,7 @@ const tableClear = () => {
 
 const addRow = (code, name) => {
     // 테이블의 tbody를 찾습니다.
-    const tbody = document.getElementById('tableBody');
+    const tbody = ViewFinder.table.body;
     
     // 새로운 tr 요소를 생성합니다.
     const tr = document.createElement('tr');
@@ -174,29 +163,29 @@ const addRow = (code, name) => {
     const checkbox = document.createElement('input');
     checkbox.className = 'selector';
     checkbox.type = 'checkbox';
-    checkbox.setAttribute('data-item-code', code);
+    checkbox.dataset.itemCode = code;
     checkboxTh.appendChild(checkbox);
 
-    if (CheckBoxList.get().some(item => item.getAttribute('data-item-code') === code)) {
+    if (CheckBoxList.get().some(item => item.dataset.itemCode === code)) {
         checkbox.checked = true;
     }
 
-    checkbox.addEventListener('change', function(event) {
+    checkbox.addEventListener(EventType.change, function(event) {
         if (event.target.checked) {
             CheckBoxList.push(checkbox);
         } else {
-            const code = checkbox.getAttribute('data-item-code');
+            const code = checkbox.dataset.itemCode;
             CheckBoxList.delete(code);
         }
     });
     
     const codeTh = document.createElement('th');
     codeTh.classList.add('color-blue');
-    codeTh.setAttribute('data-code', code);
+    codeTh.dataset.code = code;
     codeTh.textContent = code;
     
     const nameTh = document.createElement('th');
-    nameTh.setAttribute('data-name', name);
+    nameTh.dataset.name = name;
     nameTh.textContent = name;
     
     const modificationTh = document.createElement('th');
@@ -205,13 +194,13 @@ const addRow = (code, name) => {
     modificationTh.textContent = '수정';
     
     // 클릭 이벤트를 추가합니다.
-    modificationTh.addEventListener('click', () => {
+    modificationTh.addEventListener(EventType.click, () => {
         // 버튼이 포함된 행(row)을 찾습니다.
         const row = modificationTh.closest('.row');
         
         // 해당 행에서 품목 코드와 품목명을 가져옵니다.
-        const itemCode = row.querySelector('th.color-blue').getAttribute('data-code');
-        const itemName = row.querySelector('th[data-name]').getAttribute('data-name');
+        const itemCode = row.querySelector('th.color-blue').dataset.code;
+        const itemName = row.querySelector('th[data-name]').dataset.name;
         
         // 쿼리 파라미터로 추가할 데이터
         const queryParams = new URLSearchParams({
@@ -251,8 +240,8 @@ function printTableItem() {
 }
 
 function handleSearchButtonClick() {
-    const itemCode = document.querySelector('#data-code')
-    const itemName = document.querySelector('#data-name')
+    const itemCode = ViewFinder.textbox.dataCode;
+    const itemName = ViewFinder.textbox.dataName;
 
     let itemCodeValue = itemCode.value == null ? '' : itemCode.value;
     let itemNameValue = itemName.value == null ? '' : itemName.value;
@@ -262,8 +251,7 @@ function handleSearchButtonClick() {
         return
     }
 
-    const searchInit = document.getElementById('clear-search-item');
-    searchInit.style.backgroundColor = 'orange' 
+    ViewFinder.button.searchedItemClean.style.backgroundColor = 'orange' 
     Page.init()
     performSearch(itemCodeValue, itemNameValue);
 }
@@ -308,9 +296,6 @@ function checkSelectedCheckboxToLimit() {
 }
 
 function checkPage() {
-    const prevButton = document.querySelector('#prev');
-    const nextButton = document.querySelector('#next');
-
-    prevButton.disabled = !Page.existPrevPage();
-    nextButton.disabled = !Page.existNextPage(ItemList.size());
+    ViewFinder.button.prevPage.disabled = !Page.existPrevPage();
+    ViewFinder.button.nextPage.disabled = !Page.existNextPage(ItemList.size());
 }

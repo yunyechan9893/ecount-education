@@ -1,7 +1,8 @@
 import { SpecificationController } from "../common/controllers.js";
 import { DateConponent } from "../common/component.js";
+import { messageTag, EventType } from "../common/enum.js"
 import { Page, ItemList, CheckBoxList, SearchedItems } from "./saleInquiryControllers.js";
-import { messageTag } from "../common/enum.js"
+import { ViewFinder } from "./saleInquiryMapping.js";
 
 const specificationController = new SpecificationController();
 
@@ -16,7 +17,7 @@ function init() {
     printTableItem();
 
     // 팝업 창에서 넘겨받는 값
-    window.addEventListener('message', function(event) {
+    window.addEventListener(EventType.message, function(event) {
         const page = event.data.page;
         if (page != null) {
             Page.setPage(page);
@@ -40,30 +41,28 @@ function init() {
 
 function eventListener() {
 
-    const searchButton = document.querySelector('#search');
-    searchButton.addEventListener('click', () => {
-        const keywordTextBox = document.getElementById('keyword');
+    ViewFinder.button.search.addEventListener(EventType.click, () => {
+        const keywordTextBox = ViewFinder.textbox.keyword;
         let keyword = keywordTextBox.value.length > 0 ? `&keyword=${keywordTextBox.value}` : '';
-        openPopup(`/item/inquiry?page=10${keyword}`, 1000, 600)
+        let url = `/item/inquiry?page=10${keyword}`;
+        openPopup(url, 1000, 600)
     })
 
-    const search2Button = document.querySelector('#search2');
-    search2Button.addEventListener('click', () => {
-        const searchInit = document.getElementById('clear-search-item');
-        searchInit.style.backgroundColor = 'orange' 
+    ViewFinder.button.searchMove.addEventListener(EventType.click, () => {
+        const searchInitButton = ViewFinder.button.searchInit;
+        searchInitButton.style.backgroundColor = 'orange'
 
         searchData();
         printTableItem();
         CheckBoxList.init()
     })
 
-    const newButton = document.querySelector('#new');
-    newButton.addEventListener('click', () => {
-        openPopup(`/sales/registraion?page=${Page.getCurrentPage()}`, 1000, 300)
+    ViewFinder.button.new.addEventListener(EventType.click, () => {
+        let url = `/sales/registraion?page=${Page.getCurrentPage()}`;
+        openPopup(url, 1000, 300);
     })
 
-    const nextButton = document.querySelector('#next');
-    nextButton.addEventListener('click', () => {
+    ViewFinder.button.nextPage.addEventListener(EventType.click, () => {
         const itemSize = ItemList.size()
 
         Page.setNextPage(itemSize);
@@ -71,19 +70,17 @@ function eventListener() {
         checkParentCheckBox(false)
     })
 
-    const prevButton = document.querySelector('#prev');
-    prevButton.addEventListener('click', () => {
+    ViewFinder.button.prevPage.addEventListener(EventType.click, () => {
 
         Page.setPrevPage()
         printTableItem();
         checkParentCheckBox(false)
     })
 
-    const selectedDeletionButton = document.querySelector('#selected-deletion');
-    selectedDeletionButton.addEventListener('click', () => {
+    ViewFinder.button.specificationDelete.addEventListener(EventType.click, () => {
         CheckBoxList.get().forEach(checkbox => {
-            const date = checkbox.getAttribute('data-date')
-            const number = checkbox.getAttribute('data-number')
+            const date = checkbox.dataset.date
+            const number = checkbox.dataset.number
             specificationController.delete(date, number)
         
             ItemList.delete(date, number);
@@ -97,13 +94,12 @@ function eventListener() {
         checkParentCheckBox(false);
     })
 
-    const clearButton = document.querySelector('#clear-search-item');
-    clearButton.addEventListener('click', () => {
-        const searchInit = document.getElementById('clear-search-item');
+    ViewFinder.button.searchedItemClean.addEventListener(EventType.click, () => {
+        const searchInit = ViewFinder.button.searchInit;
         searchInit.style.backgroundColor = '';
 
-        const keywordTextBox = document.querySelector('#keyword');
-        const briefsTextBox = document.querySelector('#briefs')
+        const keywordTextBox = ViewFinder.textbox.keyword;
+        const briefsTextBox = ViewFinder.textbox.briefs;
         ItemList.set(specificationController.getAll());
         CheckBoxList.init();
         SearchedItems.init();
@@ -112,10 +108,9 @@ function eventListener() {
         printTableItem();
     })
 
-    const selectorParent = document.querySelector('#selector-parent');
 
-    selectorParent.onclick = () => {
-        const selectors = document.getElementsByClassName('selector');
+    ViewFinder.checkbox.selectorParent.onclick = () => {
+        const selectors = ViewFinder.checkbox.selectorChild;
    
         Array.from(selectors).forEach(selector => {
             selector.checked = selectorParent.checked;
@@ -125,13 +120,13 @@ function eventListener() {
 }
 
 function initDate() {
-    const startYearSelector = document.getElementById('start-year');
-    const startMonthSelector = document.getElementById('start-month');
-    const startDaySelector = document.getElementById('start-day');
+    const startYearSelector = ViewFinder.dropbox.startYear;
+    const startMonthSelector = ViewFinder.dropbox.startMonth;
+    const startDaySelector = ViewFinder.dropbox.startDay;
 
-    const endYearSelector = document.getElementById('end-year');
-    const endMonthSelector = document.getElementById('end-month');
-    const endDaySelector = document.getElementById('end-day');
+    const endYearSelector = ViewFinder.dropbox.endYear;
+    const endMonthSelector = ViewFinder.dropbox.endMonth;
+    const endDaySelector = ViewFinder.dropbox.endDay;
 
     // Initialize the selectors
     function initializeSelectors(yearSelector, monthSelector, daySelector) {
@@ -155,26 +150,26 @@ function initDate() {
     }
 
     // Add event listeners for both start and end date selectors
-    startYearSelector.addEventListener('change', () => handleDateChange(startYearSelector, startMonthSelector, startDaySelector));
-    startMonthSelector.addEventListener('change', () => handleDateChange(startYearSelector, startMonthSelector, startDaySelector));
+    startYearSelector.addEventListener(EventType.change, () => handleDateChange(startYearSelector, startMonthSelector, startDaySelector));
+    startMonthSelector.addEventListener(EventType.change, () => handleDateChange(startYearSelector, startMonthSelector, startDaySelector));
 
-    endYearSelector.addEventListener('change', () => handleDateChange(endYearSelector, endMonthSelector, endDaySelector));
-    endMonthSelector.addEventListener('change', () => handleDateChange(endYearSelector, endMonthSelector, endDaySelector));
+    endYearSelector.addEventListener(EventType.change, () => handleDateChange(endYearSelector, endMonthSelector, endDaySelector));
+    endMonthSelector.addEventListener(EventType.change, () => handleDateChange(endYearSelector, endMonthSelector, endDaySelector));
 
 }
 
 function checkParentCheckBox(isTurnOn) {
-    const selectorParent = document.querySelector('#selector-parent');
+    const selectorParent = ViewFinder.checkbox.selectorParent;
     selectorParent.checked = isTurnOn;
 }
 
 function searchData() {
-    const startYearSelector = document.querySelector('#start-year');
-    const startMonthSelector = document.querySelector('#start-month');
-    const startDaySelector = document.querySelector('#start-day');
-    const endYearSelector = document.querySelector('#end-year');
-    const endMonthSelector = document.querySelector('#end-month');
-    const endDaySelector = document.querySelector('#end-day');
+    const startYearSelector = ViewFinder.dropbox.startYear;
+    const startMonthSelector = ViewFinder.dropbox.startMonth;
+    const startDaySelector = ViewFinder.dropbox.startDay;
+    const endYearSelector = ViewFinder.dropbox.endYear;
+    const endMonthSelector = ViewFinder.dropbox.endMonth;
+    const endDaySelector = ViewFinder.dropbox.endDay;
 
     const selectedStartYearOption = startYearSelector.options[startYearSelector.selectedIndex].value;
     const selectedStartMonthOption = startMonthSelector.options[startMonthSelector.selectedIndex].value;
@@ -186,7 +181,7 @@ function searchData() {
     const startDate = selectedStartYearOption + "-" + selectedStartMonthOption + "-" + selectedStartDayOption;
     const endDate = selectedEndYearOption + "-" + selectedEndMonthOption + "-" + selectedEndDayOption;
 
-    const briefs = document.querySelector('#briefs').value;
+    const briefs = ViewFinder.textbox.briefs.value;
 
     ItemList.init();
     Page.init();
@@ -197,7 +192,7 @@ function searchData() {
 }
 
 const tableClear = () => {
-    const tbody = document.getElementById('table-body');
+    const tbody = ViewFinder.table.body;
 
     while (tbody.firstChild) {
         tbody.removeChild(tbody.firstChild);
@@ -206,7 +201,7 @@ const tableClear = () => {
 
 const addRow = (date, number, code, name, quantity, price, briefs) => {
     // 테이블의 <tbody> 요소를 가져옵니다.
-    const tableBody = document.getElementById('table-body');
+    const tableBody = ViewFinder.table.body;
     
     // 새로운 <tr> 요소를 생성합니다.
     const row = document.createElement('tr');
@@ -222,19 +217,17 @@ const addRow = (date, number, code, name, quantity, price, briefs) => {
     row.appendChild(checkboxCell);
 
     if (CheckBoxList.get().some(item => 
-        item.getAttribute('data-date') === date &&
-        item.getAttribute('data-number') === String(number)
+        item.dataset.date === date &&
+        item.dataset.number === String(number)
     )) {
         checkbox.checked = true;
     }
 
-    checkbox.addEventListener('change', function(event) {
+    checkbox.addEventListener(EventType.change, function(event) {
         if (event.target.checked) {
             CheckBoxList.push(checkbox)
         } else {
-            CheckBoxList.delete(
-                checkbox.getAttribute('data-date'),
-                checkbox.getAttribute('data-number'))
+            CheckBoxList.delete(checkbox.dataset.date, checkbox.dataset.number)
         }
     });
     
@@ -295,7 +288,7 @@ function createKeywordTag(code, name) {
     button.className = 'tag-close'
     button.textContent = 'x';
 
-    button.addEventListener('click', () => {
+    button.addEventListener(EventType.click, () => {
         keywordTag.remove(code)
         SearchedItems.delete(code);
     })
@@ -327,8 +320,8 @@ function printTableItem() {
 }
 
 function checkPage() {
-    const prevButton = document.querySelector('#prev');
-    const nextButton = document.querySelector('#next');
+    const prevButton = ViewFinder.button.prevPage;
+    const nextButton = ViewFinder.button.nextPage;
 
     prevButton.disabled = !Page.existPrevPage();
     nextButton.disabled = !Page.existNextPage(ItemList.size());
