@@ -1,11 +1,18 @@
-import { MemberController as Member } from "../common/controllers.js";
+import { MemberController as Member, TokenController as Token } from "../common/controllers.js";
 import { EventType } from "../common/enum.js"
 import { ViewFinder } from "./signupMapping.js";
 
 
 document.addEventListener(EventType.DOMContentLoaded, () => {
+    init();
     eventListener();
 })
+
+function init() {
+    if (Token.exist()) {
+        moveMainPage();
+    }
+}
 
 function eventListener() {
 
@@ -37,4 +44,10 @@ function eventListener() {
         const path = "/login"
         location.href = url + path;
     })
+}
+
+function moveMainPage() {
+    const url = "http://localhost:3000"
+    const path = "/sales/inquiry"
+    location.href = url + path;
 }

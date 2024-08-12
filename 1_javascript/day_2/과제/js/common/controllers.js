@@ -329,11 +329,7 @@ export const TokenController = {
     },
 
     exist() {
-        const token = Token.get();
-        if (token) {
-            return true;
-        }
-
-        return false;
+        console.log(Token.get())
+        return Token.get();
     }
 }
