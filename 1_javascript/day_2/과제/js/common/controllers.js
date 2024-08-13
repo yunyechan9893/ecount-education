@@ -153,7 +153,7 @@ export class SpecificationController {
     }
 
     push(date, code, name, quantity, price, briefs) {
-        const number = this.number.set(date);
+        let number = this.number.set(date);
     
         if ( number <= 0 ) {
             return false
@@ -162,13 +162,18 @@ export class SpecificationController {
         
         let specifications = specification.get();
 
+        console.log(number)
+        number = Number(number);
+        quantity = Number(quantity);
+        price = Number(price);
+
         specifications.push({
             date: date,
             number: number,
             code: code,
             name: name,
             quantity: quantity, 
-            price: price, 
+            price: price,
             briefs: briefs}) 
 
         specification.set(specifications);
@@ -186,6 +191,8 @@ export class SpecificationController {
         
         // 숫자 형식으로 변환 (필요할 경우)
         number = Number(number);
+        quantity = Number(quantity);
+        price = Number(price);
     
         // 새로운 사양 추가
         const newSpecification = { date, number, code, name, quantity, price, briefs };

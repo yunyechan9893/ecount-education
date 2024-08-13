@@ -39,7 +39,7 @@ function eventListener() {
 }
 
 function moveMainPage() {
-    const url = "http://localhost:3000"
+    const url = window.location.origin;
     const path = "/sales/inquiry"
     location.href = url + path;
 }

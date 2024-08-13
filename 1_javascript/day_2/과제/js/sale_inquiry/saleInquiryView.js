@@ -232,11 +232,17 @@ const addRow = (date, number, code, name, quantity, price, briefs) => {
     });
     
     // 나머지 데이터 셀 생성
+    const totalPrice = quantity * price
     const specificationDate = date + "-" + number;
-    const cells = [specificationDate, code, name, quantity, price, briefs];
+    const cells = [specificationDate, code, name, quantity, price, totalPrice, briefs];
 
     cells.forEach((cellData, index) => {
         const cell = document.createElement('th');
+
+        if (typeof cellData == 'number' || !isNaN(cellData)) {
+            cellData = String(cellData).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+
         cell.textContent = cellData;
 
         if (cellData == specificationDate) {
@@ -261,7 +267,7 @@ const addRow = (date, number, code, name, quantity, price, briefs) => {
         }
         
         // 수량과 단가는 오른쪽 정렬
-        if (index === 3 || index === 4) { // 3: 수량, 4: 단가
+        if (index === 3 || index === 4 || index === 5) { // 3: 수량, 4: 단가
             cell.style.textAlign = 'end';
         }
         
@@ -306,6 +312,10 @@ function createKeywordTag(code, name) {
 function printTableItem() {
     tableClear();
     checkPage();
+
+    let totalQuantity = 0;
+    let totalPrice = 0;
+    let totalSalePrice = 0;
     ItemList.get().slice(Page.getPrevPage(), Page.getCurrentPage()).forEach((specification) => {
         addRow(
             specification.date,
@@ -316,7 +326,21 @@ function printTableItem() {
             specification.price,
             specification.briefs
         )
+
+        totalQuantity += Number(specification.quantity);
+        totalPrice += Number(specification.price);
+        totalSalePrice +=  Number(specification.quantity * specification.price);
     });
+
+    // addRow(
+    //     '',
+    //     '-',
+    //     '-',
+    //     totalQuantity,
+    //     totalPrice,
+    //     totalSalePrice,
+    //     '-',
+    // )
 }
 
 function checkPage() {

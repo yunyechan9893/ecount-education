@@ -114,8 +114,7 @@ function eventListener() {
         openPopup(url, 1000, 600)
     })
 
-    const savingButton = document.querySelector('#save')
-    savingButton.addEventListener(EventType.click, () => {
+    ViewFinder.button.save.addEventListener(EventType.click, () => {
         const yearSelector = ViewFinder.dropbox.year;
         const monthSelector = ViewFinder.dropbox.month;
         const daySelector = ViewFinder.dropbox.day;

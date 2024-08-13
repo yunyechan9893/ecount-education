@@ -10,7 +10,8 @@ document.addEventListener(EventType.DOMContentLoaded, () => {
 
 function init() {
     if (Token.exist()) {
-        moveMainPage();
+        const path = "/sales/inquiry"
+        moveMainPage(path);
     }
 }
 
@@ -40,14 +41,12 @@ function eventListener() {
             return;
         }
 
-        const url = "http://localhost:3000"
         const path = "/login"
-        location.href = url + path;
+        moveMainPage(path)
     })
 }
 
-function moveMainPage() {
-    const url = "http://localhost:3000"
-    const path = "/sales/inquiry"
+function moveMainPage(path) {
+    const url = window.location.origin;
     location.href = url + path;
 }

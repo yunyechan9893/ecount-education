@@ -3,7 +3,8 @@ export const ViewFinder = {
         delete: document.querySelector('#delete'),
         search: document.querySelector('#search'),
         close: document.querySelector('#close'),
-        rewrite: document.querySelector('#rewrite')
+        rewrite: document.querySelector('#rewrite'),
+        save: document.querySelector('#save')
     },
 
     textbox: {
