@@ -1,4 +1,5 @@
-import { SpecificationController } from "../common/controllers.js";
+import { SpecificationController, createUrl } from "../common/controllers.js";
+import { Urls } from "../common/textCollection.js";
 import { DateConponent } from "../common/component.js";
 import { messageTag, EventType } from "../common/enum.js"
 import { Page, ItemList, CheckBoxList, SearchedItems } from "./saleInquiryControllers.js";
@@ -42,9 +43,8 @@ function init() {
 function eventListener() {
 
     ViewFinder.button.search.addEventListener(EventType.click, () => {
-        const keywordTextBox = ViewFinder.textbox.keyword;
-        let keyword = keywordTextBox.value.length > 0 ? `&keyword=${keywordTextBox.value}` : '';
-        let url = `/item/inquiry?page=10${keyword}`;
+        const params = ViewFinder.textbox.keyword.length > 0 ? {keyword: ViewFinder.textbox} : {};
+        const url = createUrl(Urls.itemsInquiry).params(params);
         openPopup(url, 1000, 600)
     })
 
@@ -58,7 +58,8 @@ function eventListener() {
     })
 
     ViewFinder.button.new.addEventListener(EventType.click, () => {
-        let url = `/sales/registraion?page=${Page.getCurrentPage()}`;
+        const params = {page: Page.getCurrentPage()};
+        const url = createUrl(Urls.createdSales).params(params);
         openPopup(url, 1000, 300);
     })
 
@@ -249,7 +250,7 @@ const addRow = (date, number, code, name, quantity, price, briefs) => {
             cell.classList.add('color-blue', 'modification');
             cell.onclick = () => {
 
-                const queryParams = new URLSearchParams({
+                const params = {
                     page: Page.getCurrentPage(),
                     date: date,
                     number: number,
@@ -258,10 +259,9 @@ const addRow = (date, number, code, name, quantity, price, briefs) => {
                     quantity: quantity,
                     price: price,
                     briefs: briefs
-                }).toString();
+                };
+                const url = createUrl(Urls.modifiedSales).params(params);
 
-                const url = `/sales/modification?${queryParams}`;
-        
                 openPopup(url, 1000, 300);
             }
         }

@@ -1,4 +1,5 @@
-import { ItemController } from "../common/controllers.js";
+import { ItemController, createUrl } from "../common/controllers.js";
+import { Urls, ExceptionMessage as Messages } from "../common/textCollection.js";
 import { messageTag, EventType } from "../common/enum.js"
 import { Page, ItemList, CheckBoxList, SelectLimit } from "./itemInquiryControllers.js";
 import { ViewFinder } from "./itemInquiryMapping.js";
@@ -50,13 +51,11 @@ function init() {
 function eventListener() {
 
     ViewFinder.button.new.addEventListener(EventType.click, ()=> {
-        const queryParams = new URLSearchParams({
+        const params = {
             page: Page.getCurrentPage()
-        }).toString();
+        };
         
-        // 팝업을 여는 URL을 생성합니다.
-        const url = `/item/registration?${queryParams}`;
-        
+        const url = createUrl(Urls.createdItems).params(params);
         openPopup(url);
     })
 
@@ -101,7 +100,7 @@ function eventListener() {
         });
 
         const path = window.location.pathname;
-        if (path === ITEM_INQUIRY_API) { 
+        if (path === Urls.itemsInquiry) { 
             excuteRefreshClose(rowData, messageTag.ITEM_INQUIRY)
             return
         } 
@@ -202,16 +201,12 @@ const addRow = (code, name) => {
         const itemCode = row.querySelector('th.color-blue').dataset.code;
         const itemName = row.querySelector('th[data-name]').dataset.name;
         
-        // 쿼리 파라미터로 추가할 데이터
-        const queryParams = new URLSearchParams({
+        const params = {
             code: itemCode,
             name: itemName,
             page: Page.getCurrentPage()
-        }).toString();
-        
-        // 팝업을 여는 URL을 생성합니다.
-        const url = `/item/modification?${queryParams}`;
-        
+        }
+        const url = createUrl(Urls.modifiedItems).params(params)
         openPopup(url);
     });
     
@@ -247,7 +242,7 @@ function handleSearchButtonClick() {
     let itemNameValue = itemName.value == null ? '' : itemName.value;
 
     if (itemCodeValue.length <= 0 && itemNameValue.length <= 0) {
-        alert('품목코드 혹은 품목명을 입력해주세요')
+        alert(Messages.ITEM_CODE_OR_NAME_PROMPT)
         return
     }
 

@@ -1,11 +1,10 @@
-import { SpecificationController } from "../common/controllers.js";
+import { SpecificationController, createUrl } from "../common/controllers.js";
+import { Urls } from "../common/textCollection.js";
 import { DateConponent } from "../common/component.js";
 import { messageTag, EventType } from "../common/enum.js"
 import { PageStatus, SearchedItems, Specification } from "./saleInputControllers.js";
 import { ViewFinder } from "./saleInputMapping.js";
 
-
-const MODIFICAION_PATH = '/sales/modification'
 const specificationController = new SpecificationController();
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -13,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const path = window.location.pathname;
     const titleText = ViewFinder.textbox.title;
-    if (path === MODIFICAION_PATH) {
+    if (path === Urls.modifiedSales) {
 
         const queryParams = new URLSearchParams(window.location.search);
         
@@ -107,10 +106,15 @@ document.addEventListener('DOMContentLoaded', () => {
 function eventListener() {
     const searchButton = ViewFinder.button.search;
     searchButton.addEventListener(EventType.click, () => {
-        let limit = PageStatus.checkModificationStatus() ? `&limit=${1}` : `&limit=${3}`;
-        const keywordTextBox = document.getElementById('keyword');
-        let keyword = keywordTextBox.value.length > 0 ? `&keyword=${keywordTextBox.value}` : '';
-        let url = `/sales/search?page=10${limit}${keyword}`;
+        const limit = PageStatus.checkModificationStatus() ? 1 : 3
+        const keyword = ViewFinder.textbox.keyword.length > 0 ? ViewFinder.textbox.keyword : '';
+        
+        const params = {
+            limit: limit,
+            keyword: keyword
+        }
+        const url = createUrl(Urls.search).params(params);
+
         openPopup(url, 1000, 600)
     })
 

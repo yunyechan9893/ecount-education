@@ -1,14 +1,12 @@
 import { ItemController } from "../common/controllers.js";
+import { Urls } from "../common/textCollection.js";
 import { PageStatus, CurrentItem } from "./itemRegistrationControllers.js";
 import { messageTag, EventType } from "../common/enum.js"
 import { ViewFinder } from "./itemRegistrationMapping.js";
 
-const MODIFICATION_PATH = '/item/modification';
-
 document.addEventListener(EventType.DOMContentLoaded, () => {
-
     const path = window.location.pathname;
-    if (path === MODIFICATION_PATH) {
+    if (path === Urls.modifiedItems) {
         // URL에서 쿼리 파라미터를 가져옵니다.
         const queryParams = new URLSearchParams(window.location.search);
 

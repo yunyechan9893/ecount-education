@@ -1,4 +1,5 @@
 import { MemberController as Member, TokenController as Token } from "../common/controllers.js";
+import { Urls } from "../common/textCollection.js";
 import { EventType } from "../common/enum.js"
 import { ViewFinder } from "./loginMapping.js";
 
@@ -40,6 +41,7 @@ function eventListener() {
 
 function moveMainPage() {
     const url = window.location.origin;
-    const path = "/sales/inquiry"
+    const path = Urls.salesInquiry;
+
     location.href = url + path;
 }

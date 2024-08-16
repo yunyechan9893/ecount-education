@@ -340,3 +340,16 @@ export const TokenController = {
         return Token.get();
     }
 }
+
+
+export function createUrl(baseUrl) {
+    return {
+        url: baseUrl,
+        params(queryParams = {}) {
+            const queryString = Object.keys(queryParams)
+                .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(queryParams[key])}`)
+                .join('&');
+            return queryString ? `${this.url}?${queryString}` : this.url;
+        }
+    };
+}
